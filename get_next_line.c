@@ -16,15 +16,17 @@ void  get_line(int fd, char **lc, char **res)
 {
   char  *buffer;
   char  *str;
+  int rd;
+  rd = 1;
 
   str = (char*)malloc(1);
   *str = '\0';
   buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
   //printf("%d\n", !ft_strchr(str, '\n'));
-  //printf("res is %s\n", *res);
-  while (!ft_strchr(str, '\n') || read(fd, 0, 0) > 0)
+  printf("rd is %d\n", rd);
+  while (!ft_strchr(str, '\n') && rd > 0)
   {
-    read(fd, buffer, BUFFER_SIZE);
+    rd = read(fd, buffer, BUFFER_SIZE);
     str = ft_strjoin(str, buffer);
   }
   //printf("%s\n", buffer);
@@ -56,7 +58,10 @@ char  *get_next_line(int fd)
   if (lc && ft_strchr(lc, '\n'))
     return (ft_substr(lc, 0, ft_strchr(lc, '\n')));
   if (lc)
+  {
     res = ft_strjoin(res, lc);
+    lc = NULL;
+  }
   get_line(fd, &lc, &res);
   //printf("fd is %d, res is %s, chyata is %s\n", fd, res, lc);
   
@@ -66,6 +71,7 @@ char  *get_next_line(int fd)
 int main()
 {
   int fd = open("test.txt", O_RDWR | O_CREAT);
+  printf("%s\n", get_next_line(fd));
   printf("%s\n", get_next_line(fd));
   printf("%s\n", get_next_line(fd));
   printf("%s\n", get_next_line(fd));
