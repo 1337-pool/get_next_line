@@ -22,17 +22,12 @@ void  get_line(int fd, char **lc, char **res)
   str = (char*)malloc(1);
   *str = '\0';
   buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-  //printf("%d\n", !ft_strchr(str, '\n'));
-  printf("rd is %d\n", rd);
   while (!ft_strchr(str, '\n') && rd > 0)
   {
     rd = read(fd, buffer, BUFFER_SIZE);
     str = ft_strjoin(str, buffer);
   }
-  //printf("%s\n", buffer);
   char *test = ft_substr(str, 0, ft_strchr(str, '\n'));
-  //printf("test\n");
-  //printf("lc is %s, and res is %s\n", *lc, *res);
   *res = ft_strjoin(*res, test);
   *lc = str + ft_strchr(str, '\n') + 1;
   free(str);
@@ -43,36 +38,34 @@ char  *get_next_line(int fd)
 {
   static char *lc;
   char  *res;
+
   res = (char *)malloc(sizeof(char));
   *res = '\0';
-  //char  *buffer;
   if (fd < 0 || BUFFER_SIZE <= 0)
   {
-    //printf("fd is %d, and buffer size is %d\n", fd, BUFFER_SIZE);
-    free(lc);
-    //free(buffer);
     lc = NULL;
-    //buffer = NULL;
     return (NULL);
   }
   if (lc && ft_strchr(lc, '\n'))
-    return (ft_substr(lc, 0, ft_strchr(lc, '\n')));
+  {
+    res = ft_substr(lc, 0, ft_strchr(lc, '\n'));
+    lc = lc + ft_strchr(lc, '\n');
+    printf("%s\n", lc);
+    return (res);
+  }
   if (lc)
   {
     res = ft_strjoin(res, lc);
     lc = NULL;
   }
   get_line(fd, &lc, &res);
-  //printf("fd is %d, res is %s, chyata is %s\n", fd, res, lc);
-  
+  printf("fd is %d, res is %s, chyata is %s\n", fd, res, lc);
   return (res);
 }
 
 int main()
 {
   int fd = open("test.txt", O_RDWR | O_CREAT);
-  printf("%s\n", get_next_line(fd));
-  printf("%s\n", get_next_line(fd));
   printf("%s\n", get_next_line(fd));
   printf("%s\n", get_next_line(fd));
   printf("%s\n", get_next_line(fd));

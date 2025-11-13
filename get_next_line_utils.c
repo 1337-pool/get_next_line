@@ -6,13 +6,13 @@
 /*   By: mjaber <mjaber@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 13:54:29 by mjaber            #+#    #+#             */
-/*   Updated: 2025/11/12 14:38:55 by mjaber           ###   ########.fr       */
+/*   Updated: 2025/11/13 16:51:27 by mjaber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
+size_t	ft_strlen(const char *s) 
 {
 	int				i;
 	unsigned char	*str;
@@ -31,35 +31,34 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	char	*str2;
 	int		i;
 
-	str1 = (char *)s1;
-	str2 = (char *)s2;
-	i = 0;
-	mem = (char *)malloc(sizeof(char)
-			* (ft_strlen(str1) + ft_strlen(str2) + 1));
-	if (!mem)
+	if (!s1)
+      return (ft_strdup(s2));
+  i = 0;
+  str1 = (char *)s1;
+  str2 = (char *)s2;
+  mem = (char *)malloc(sizeof(char)
+                       * (ft_strlen(str1) + ft_strlen(str2) + 1));
+  if (!mem)
 		return (NULL);
 	while (*str1)
 		mem[i++] = *(str1++);
 	while (*str2)
 		mem[i++] = *(str2++);
-	mem[i] = '\0';
+	mem[i] = '\0';  
 	return (mem);
 }
 
-int	ft_strchr(const char *s, int c)
+char	*ft_strchr(const char *s, int c)
 {
-  int i;
-
-  i = 0;
-	while (s[i])
+	while (*s)
 	{
-		if (s[i] == (char )c)
-			return (i);
-		i++;
+		if (*s == (char )c)
+			return ((char *)s);
+		s++;
 	}
-	if (s[i] == (char )c)
-		return (i);
-	return (0);
+	if (*s == (char )c)
+		return ((char *)s);
+	return (NULL);
 }
 
 char	*ft_strdup(const char *s)
@@ -70,7 +69,7 @@ char	*ft_strdup(const char *s)
 
 	str = (char *)s;
 	i = 0;
-	p = (char *)malloc(ft_strlen(str) + 1 * sizeof(char));
+	p = (char *)malloc((ft_strlen(str) + 1) * sizeof(char));
 	if (!p)
 		return (NULL);
 	while (*str)
