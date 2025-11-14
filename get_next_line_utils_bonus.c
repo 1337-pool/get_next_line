@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mjaber <mjaber@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/12 13:54:29 by mjaber            #+#    #+#             */
-/*   Updated: 2025/11/13 16:51:27 by mjaber           ###   ########.fr       */
+/*   Created: 2025/11/14 16:58:45 by mjaber            #+#    #+#             */
+/*   Updated: 2025/11/14 16:58:49 by mjaber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -40,9 +40,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	if (!mem)
 		return (NULL);
 	i = -1;
+	j = -1;
 	while (s1[++i])
 		mem[i] = s1[i];
-	j = -1;
 	while (s2[++j])
 		mem[i + j] = s2[j];
 	mem[i + j] = '\0';

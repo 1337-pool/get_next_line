@@ -6,68 +6,120 @@
 /*   By: mjaber <mjaber@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 11:12:58 by mjaber            #+#    #+#             */
-/*   Updated: 2025/11/12 14:38:57 by mjaber           ###   ########.fr       */
+/*   Updated: 2025/11/14 16:55:38 by mjaber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void  get_line(int fd, char **lc, char **res)
+static char	*extract_line(char **res, char **lc)
 {
-  char  *buffer;
-  char  *str;
-  int rd;
-  rd = 1;
+	char	*temp;
+	int		nl_pos;
 
-  str = (char*)malloc(1);
-  *str = '\0';
-  buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-  while (!ft_strchr(str, '\n') && rd > 0)
-  {
-    rd = read(fd, buffer, BUFFER_SIZE);
-    str = ft_strjoin(str, buffer);
-  }
-  char *test = ft_substr(str, 0, ft_strchr(str, '\n'));
-  *res = ft_strjoin(*res, test);
-  *lc = str + ft_strchr(str, '\n') + 1;
-  free(str);
-  free(buffer);
+	nl_pos = ft_strchr(*res, '\n');
+	if (nl_pos != -1)
+	{
+		*lc = ft_substr(*res, nl_pos + 1, ft_strlen(*res) - nl_pos - 1);
+		temp = ft_substr(*res, 0, nl_pos + 1);
+		free(*res);
+		*res = temp;
+	}
+	return (*res);
 }
 
-char  *get_next_line(int fd)
+void	get_line(int fd, char **lc, char **res)
 {
-  static char *lc;
-  char  *res;
+	char	*buffer;
+	char	*temp;
+	int		rd;
 
-  res = (char *)malloc(sizeof(char));
-  *res = '\0';
-  if (fd < 0 || BUFFER_SIZE <= 0)
-  {
-    lc = NULL;
-    return (NULL);
-  }
-  if (lc && ft_strchr(lc, '\n'))
-  {
-    res = ft_substr(lc, 0, ft_strchr(lc, '\n'));
-    lc = lc + ft_strchr(lc, '\n');
-    printf("%s\n", lc);
-    return (res);
-  }
-  if (lc)
-  {
-    res = ft_strjoin(res, lc);
-    lc = NULL;
-  }
-  get_line(fd, &lc, &res);
-  printf("fd is %d, res is %s, chyata is %s\n", fd, res, lc);
-  return (res);
+	if (BUFFER_SIZE <= 0 || fd < 0)
+		return ;
+	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return ;
+	rd = 1;
+	while (rd > 0)
+	{
+		rd = read(fd, buffer, BUFFER_SIZE);
+		if (rd <= 0)
+			break ;
+		buffer[rd] = '\0';
+		temp = ft_strjoin(*res, buffer);
+		free(*res);
+		*res = temp;
+		if (ft_strchr(*res, '\n') != -1)
+			break ;
+	}
+	free(buffer);
+	extract_line(res, lc);
 }
 
+static char	*handle_leftover(char **lc, char **res)
+{
+	char	*temp;
+	int		nl_pos;
+
+	nl_pos = ft_strchr(*lc, '\n');
+	if (nl_pos != -1)
+	{
+		free(*res);
+		*res = ft_substr(*lc, 0, nl_pos + 1);
+		temp = ft_substr(*lc, nl_pos + 1, ft_strlen(*lc) - nl_pos - 1);
+		free(*lc);
+		*lc = temp;
+		return (*res);
+	}
+	temp = ft_strjoin(*res, *lc);
+	free(*res);
+	free(*lc);
+	*res = temp;
+	*lc = NULL;
+	return (NULL);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*lc;
+	char		*res;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	res = ft_strdup("");
+	if (!res)
+		return (NULL);
+	if (lc && handle_leftover(&lc, &res))
+		return (res);
+	get_line(fd, &lc, &res);
+	if (!res || *res == '\0')
+	{
+		free(res);
+		if (lc)
+			free(lc);
+		lc = NULL;
+		return (NULL);
+	}
+	return (res);
+}
+/*
 int main()
 {
-  int fd = open("test.txt", O_RDWR | O_CREAT);
-  printf("%s\n", get_next_line(fd));
-  printf("%s\n", get_next_line(fd));
-  printf("%s\n", get_next_line(fd));
-  printf("%s\n", get_next_line(fd));
-}
+  int fd = open("text.txt", O_RDWR);
+  char *s;
+  //while ((s = get_next_line(fd)))
+  //{
+	//  //if (!s)
+	//  //	  return 0;
+	//  printf("%s", s);
+	//  free(s);
+  //}
+  printf("%s", get_next_line(fd));
+  printf("%s", get_next_line(fd));
+  printf("%s", get_next_line(fd));
+  printf("%s", get_next_line(fd));
+  printf("%s", get_next_line(fd));
+  printf("%s", get_next_line(fd));
+  printf("%s", get_next_line(fd));
+  //printf("%s",(char *)NULL);
+}*/
